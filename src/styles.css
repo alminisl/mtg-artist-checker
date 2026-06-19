@@ -59,38 +59,14 @@ a:hover {
 .mana-row {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 9px;
   margin-bottom: 16px;
+  font-size: 21px;
 }
-.pip {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  position: relative;
+.mana-row .ms-cost {
   box-shadow:
-    inset 0 0 0 1px rgba(0, 0, 0, 0.35),
-    inset 2px 3px 3px rgba(255, 255, 255, 0.45),
-    0 0 10px var(--glow, rgba(255, 255, 255, 0.25));
-}
-.pip.w {
-  background: radial-gradient(circle at 35% 30%, #fffef8, #e3dcc2);
-  --glow: rgba(246, 241, 222, 0.5);
-}
-.pip.u {
-  background: radial-gradient(circle at 35% 30%, #bfe0ff, #2f6fc0);
-  --glow: rgba(79, 147, 218, 0.55);
-}
-.pip.b {
-  background: radial-gradient(circle at 35% 30%, #b9aecb, #3c3247);
-  --glow: rgba(107, 90, 126, 0.55);
-}
-.pip.r {
-  background: radial-gradient(circle at 35% 30%, #ffab9d, #b53b34);
-  --glow: rgba(216, 91, 84, 0.55);
-}
-.pip.g {
-  background: radial-gradient(circle at 35% 30%, #aee6b8, #2f8b4f);
-  --glow: rgba(88, 169, 106, 0.55);
+    inset 0 0 0 1px rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(0, 0, 0, 0.45);
 }
 
 h1 {

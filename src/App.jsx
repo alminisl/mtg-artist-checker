@@ -38,11 +38,11 @@ export default function App() {
     <div className="wrap">
       <header className="hero">
         <div className="mana-row" aria-hidden="true">
-          <span className="pip w" />
-          <span className="pip u" />
-          <span className="pip b" />
-          <span className="pip r" />
-          <span className="pip g" />
+          <i className="ms ms-w ms-cost" />
+          <i className="ms ms-u ms-cost" />
+          <i className="ms ms-b ms-cost" />
+          <i className="ms ms-r ms-cost" />
+          <i className="ms ms-g ms-cost" />
         </div>
         <h1>MTG Artist Finder</h1>
         <p className="tagline">
@@ -70,11 +70,8 @@ export default function App() {
       {view === 'search' ? (
         <>
           <p className="sub">
-            Type a card name. It lists <b>every artist across every printing</b> (via the{' '}
-            <a href="https://scryfall.com/docs/api" target="_blank" rel="noopener noreferrer">
-              Scryfall API
-            </a>
-            ) and tells you which ones are in the{' '}
+            Type a card name. It lists <b>every artist across every printing</b> and
+            tells you which ones are in the{' '}
             <a
               href="https://mcamsterdam.mtgfestivals.com/en-us/art-of-magic/artist-directory.html"
               target="_blank"
