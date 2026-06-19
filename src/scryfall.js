@@ -32,11 +32,23 @@ async function sf(url) {
 const setLabel = (c) =>
   `${(c.set || '').toUpperCase()} #${c.collector_number || '?'}`
 
-// Per-printing artist contributions: { artist, illId, img, label }.
+// Classify a printing's visual treatment. '' = standard/original art.
+function treatmentOf(card) {
+  const fe = card.frame_effects || []
+  if (card.border_color === 'borderless') return 'Borderless'
+  if (fe.includes('extendedart')) return 'Extended art'
+  if (fe.includes('showcase')) return 'Showcase'
+  if (card.full_art) return 'Full art'
+  if (fe.includes('etched')) return 'Etched'
+  return ''
+}
+
+// Per-printing artist contributions: { artist, illId, treat, img, label }.
 // Handles "A & B" joint credits and multi-face cards (each face its own art).
 function contributions(card) {
   const out = []
-  const label = setLabel(card)
+  const treat = treatmentOf(card)
+  const label = setLabel(card) + (treat ? ` · ${treat}` : '')
   const add = (artistStr, illId, uris) => {
     const u = uris || card.image_uris
     const img = u && (u.normal || u.large || u.png || u.small) // full card image
@@ -48,6 +60,7 @@ function contributions(card) {
         out.push({
           artist: a,
           illId: illId || card.illustration_id || img || a,
+          treat,
           img,
           label,
         }),
@@ -119,7 +132,16 @@ export async function lookupCard(name) {
   }
   if (!prints.length) prints.push(named)
 
-  // artist -> { printings, distinct artworks keyed by illustration_id }
+  // Order so the standard/original printing wins as the representative for each
+  // (illustration + treatment): non-promo first, then earliest released.
+  prints.sort((a, b) => {
+    const pa = a.set_type === 'promo' ? 1 : 0
+    const pb = b.set_type === 'promo' ? 1 : 0
+    if (pa !== pb) return pa - pb
+    return (a.released_at || '').localeCompare(b.released_at || '')
+  })
+
+  // artist -> { printings, distinct artworks keyed by illustration + treatment }
   const map = new Map()
   for (const c of prints) {
     for (const con of contributions(c)) {
@@ -128,8 +150,14 @@ export async function lookupCard(name) {
         map.set(k, { name: con.artist, prints: new Set(), arts: new Map() })
       const e = map.get(k)
       e.prints.add(con.label)
-      if (con.img && !e.arts.has(con.illId))
-        e.arts.set(con.illId, { img: con.img, label: con.label })
+      const artKey = con.illId + '|' + (con.treat || '')
+      if (con.img && !e.arts.has(artKey))
+        e.arts.set(artKey, {
+          img: con.img,
+          label: con.label,
+          treat: con.treat,
+          og: !con.treat,
+        })
     }
   }
 
@@ -137,7 +165,8 @@ export async function lookupCard(name) {
     .map((a) => ({
       name: a.name,
       prints: [...a.prints],
-      arts: [...a.arts.values()],
+      // original art(s) first, then alternate treatments
+      arts: [...a.arts.values()].sort((x, y) => (x.og ? 0 : 1) - (y.og ? 0 : 1)),
     }))
     .sort((x, y) => x.name.localeCompare(y.name))
 

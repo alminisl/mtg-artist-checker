@@ -233,14 +233,18 @@ function ArtistCard({ cardName, artist, hit, saved }) {
       {shown.length > 0 && (
         <div className="arts">
           {shown.map((art, i) => (
-            <img
-              key={i}
-              className="art"
-              src={art.img}
-              alt={`card art by ${artist.name} — ${art.label}`}
-              title={art.label}
-              loading="lazy"
-            />
+            <figure className="artfig" key={i}>
+              <img
+                className="art"
+                src={art.img}
+                alt={`card art by ${artist.name} — ${art.label}`}
+                title={art.label}
+                loading="lazy"
+              />
+              <figcaption className={'arttag' + (art.og ? ' og' : '')}>
+                {art.og ? 'Original' : art.treat}
+              </figcaption>
+            </figure>
           ))}
           {extra > 0 && <span className="more">+{extra} more</span>}
         </div>

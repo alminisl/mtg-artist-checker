@@ -340,11 +340,25 @@ button:disabled {
   flex-wrap: wrap;
   margin-top: 12px;
 }
+.artfig {
+  margin: 0;
+  width: 146px;
+}
 .art {
   width: 146px;
   border-radius: 8px;
   border: 1px solid var(--line);
   display: block;
+}
+.arttag {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 4px;
+}
+.arttag.og {
+  color: var(--green);
+  font-weight: 600;
 }
 .more {
   align-self: center;
