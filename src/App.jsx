@@ -92,7 +92,7 @@ export default function App() {
           {result?.suggestions && <Suggestions list={result.suggestions} onPick={run} />}
 
           {result && !result.suggestions && (
-            <Results dirMap={dirMap} saved={saved} {...result} />
+            <Results key={result.card.id} dirMap={dirMap} saved={saved} {...result} />
           )}
         </>
       ) : (
@@ -132,6 +132,11 @@ function Suggestions({ list, onPick }) {
 }
 
 function Results({ dirMap, saved, card, cardImg, nPrints, artists }) {
+  const [showOthers, setShowOthers] = useState(false)
+
+  const atCon = artists.filter((a) => dirMap.get(norm(a.name)))
+  const others = artists.filter((a) => !dirMap.get(norm(a.name)))
+
   return (
     <div>
       <div className="card-head">
@@ -140,20 +145,50 @@ function Results({ dirMap, saved, card, cardImg, nPrints, artists }) {
           <h2>{card.name}</h2>
           <div className="meta">
             {nPrints} printing{nPrints !== 1 ? 's' : ''} · {artists.length} unique artist
-            {artists.length !== 1 ? 's' : ''}
+            {artists.length !== 1 ? 's' : ''} · <b className="hit">{atCon.length} at MagicCon</b>
           </div>
         </div>
       </div>
 
-      {artists.map((a) => (
-        <ArtistCard
-          key={a.name}
-          cardName={card.name}
-          artist={a}
-          hit={dirMap.get(norm(a.name))}
-          saved={saved}
-        />
-      ))}
+      {atCon.length > 0 ? (
+        atCon.map((a) => (
+          <ArtistCard
+            key={a.name}
+            cardName={card.name}
+            artist={a}
+            hit={dirMap.get(norm(a.name))}
+            saved={saved}
+          />
+        ))
+      ) : (
+        <div className="nohit">
+          None of this card's artists are in the MagicCon Amsterdam directory.
+        </div>
+      )}
+
+      {others.length > 0 && (
+        <>
+          <button
+            className="toggle-others"
+            onClick={() => setShowOthers((v) => !v)}
+            aria-expanded={showOthers}
+          >
+            {showOthers ? '▾ Hide' : '▸ Show'} {others.length} artist
+            {others.length !== 1 ? 's' : ''} not at MagicCon
+          </button>
+
+          {showOthers &&
+            others.map((a) => (
+              <ArtistCard
+                key={a.name}
+                cardName={card.name}
+                artist={a}
+                hit={dirMap.get(norm(a.name))}
+                saved={saved}
+              />
+            ))}
+        </>
+      )}
     </div>
   )
 }

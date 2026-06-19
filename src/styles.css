@@ -270,6 +270,35 @@ button:disabled {
   color: var(--muted);
   font-size: 13px;
 }
+.card-head .meta .hit {
+  color: var(--green);
+}
+.nohit {
+  background: var(--panel);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--muted);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.toggle-others {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  margin: 6px 0 12px;
+}
+.toggle-others:hover {
+  color: var(--txt);
+  border-color: var(--accent);
+}
 .artist {
   background: var(--panel);
   border: 1px solid var(--line);
