@@ -61,11 +61,46 @@ function contributions(card) {
   return out
 }
 
+// Resolve a typed name to a single card, or a list of suggestions.
+// Tries exact-ish fuzzy first; on "not found" / "ambiguous" it falls back to a
+// full name search so partial queries like "yshtola" still surface matches.
+async function resolveCard(name) {
+  try {
+    const card = await sf(
+      'https://api.scryfall.com/cards/named?fuzzy=' + encodeURIComponent(name),
+    )
+    return { card }
+  } catch {
+    const res = await fetch(
+      'https://api.scryfall.com/cards/search?order=name&unique=cards&q=' +
+        encodeURIComponent(name),
+      { headers: { Accept: 'application/json' } },
+    )
+    const j = await res.json()
+    const list = (j && j.object !== 'error' && j.data) || []
+    if (list.length === 1) return { card: list[0] }
+    if (list.length > 1) {
+      return {
+        suggestions: list.slice(0, 20).map((c) => ({
+          name: c.name,
+          set: (c.set || '').toUpperCase(),
+          thumb:
+            c.image_uris?.art_crop ||
+            c.card_faces?.[0]?.image_uris?.art_crop ||
+            '',
+        })),
+      }
+    }
+    throw new Error('not found')
+  }
+}
+
 // Resolve a card by (fuzzy) name and aggregate every artist across every printing.
+// Returns either { suggestions: [...] } or the full aggregated result.
 export async function lookupCard(name) {
-  const named = await sf(
-    'https://api.scryfall.com/cards/named?fuzzy=' + encodeURIComponent(name),
-  )
+  const resolved = await resolveCard(name)
+  if (resolved.suggestions) return { suggestions: resolved.suggestions }
+  const named = resolved.card
 
   let url =
     named.prints_search_uri ||
