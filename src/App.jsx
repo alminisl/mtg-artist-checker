@@ -36,7 +36,20 @@ export default function App() {
 
   return (
     <div className="wrap">
-      <h1>🎨 MTG Artist → MagicCon Amsterdam Checker</h1>
+      <header className="hero">
+        <div className="mana-row" aria-hidden="true">
+          <span className="pip w" />
+          <span className="pip u" />
+          <span className="pip b" />
+          <span className="pip r" />
+          <span className="pip g" />
+        </div>
+        <h1>MTG Artist Finder</h1>
+        <p className="tagline">
+          Discover every artist behind a card — and who's signing at MagicCon
+          Amsterdam.
+        </p>
+      </header>
 
       <nav className="tabs">
         <button
